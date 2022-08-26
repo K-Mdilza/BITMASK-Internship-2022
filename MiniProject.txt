@@ -1,0 +1,180 @@
+#include <dht.h>
+#include <LiquidCrystal.h> 
+#define SENSOR 13 // define pint 13 for sensor
+dht DHT;
+const int rs = 2, en = 3, d4 = 4, d5 = 5, d6 = 6, d7 = 7; //LCD pinouts
+float counter = 0; // declaraion of variables
+float lastcounter;
+float Amount;
+float distance;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7); // Display
+byte smiley[8]={
+  B00000,
+  B10001,
+  B00000,
+  B00000,
+  B10001,
+  B01110,
+  B00000,
+};
+byte a[8] = {
+  B00001,
+  B00011,
+  B00111,
+  B01110,
+  B11110,
+  B11111,
+  B11111,
+  B11111
+};
+byte b[8] = {
+  B11111,
+  B11111,
+  B11111,
+  B01110,
+  B01110,
+  B11111,
+  B11111,
+  B11111
+};
+byte c[8] = {
+  B10000,
+  B11000,
+  B11100,
+  B01110,
+  B01111,
+  B11111,
+  B11111,
+  B11111
+};
+byte d[8] = {
+  B11011,
+  B11000,
+  B11100,
+  B11110,
+  B01111,
+  B00111,
+  B00011,
+  B00001
+};
+byte e[8] = {
+  B11111,
+  B00000,
+  B00000,
+  B00000,
+  B00000,
+  B11111,
+  B11111,
+  B11111
+};
+byte f[8] = {
+  B11011,
+  B00011,
+  B00111,
+  B01111,
+  B11110,
+  B11100,
+  B11000,
+  B10000
+};  //Smiley face code for Display
+void setup() {
+  lcd.begin(16,2);
+  lcd.setCursor(0,0);
+  lcd.print("TAXIFAREMETER");
+  lcd.setCursor(1,1);
+  lcd.print("Hello Visitor!"); 
+  lcd.createChar(0, smiley);
+  lcd.setCursor(0,1);
+  lcd.write(byte(0)); 
+  lcd.setCursor(15,1);
+  lcd.write(byte(0));
+  delay(4000);
+  lcd.createChar(1, a);
+  lcd.createChar(2, b);
+  lcd.createChar(3, c);
+  lcd.createChar(4, d);
+  lcd.createChar(5, e);
+  lcd.createChar(6, f);
+  pinMode(SENSOR, INPUT_PULLUP);// define pin as Input  sensor
+  int i=0;
+  while(i<8)
+  {
+    for(i==0;i<2;i++)
+    {
+  lcd.setCursor(0,0);
+  lcd.print("NICE TO MEET YOU");
+  lcd.noDisplay();
+  delay(400);
+  lcd.display();
+  delay(400);
+  lcd.clear();
+    }
+  delay(500);
+  for(i==2;i<6;i++)
+    {
+  int readDHT = DHT.read11(8); 
+  lcd.setCursor(0, 0);
+  lcd.write(byte(1));
+  lcd.setCursor(1, 0);
+  lcd.write(byte(2));
+  lcd.setCursor(2, 0);
+  lcd.write(byte(3));
+  lcd.setCursor(0, 1);
+  lcd.write(byte(4));
+  lcd.setCursor(1, 1);
+  lcd.write(byte(5));
+  lcd.setCursor(2, 1);
+  lcd.write(byte(6));
+  lcd.setCursor(4,0); 
+  lcd.print("Temperature:");
+  lcd.setCursor(6,1);
+  lcd.print(DHT.temperature);
+  lcd.print("C");
+  delay(1000);
+  lcd.clear();
+    }
+    delay(500);
+  for(i==6;i<8;i++)
+    {
+  lcd.setCursor(0, 0);
+  lcd.write(byte(1));
+  lcd.setCursor(1, 0);
+  lcd.write(byte(2));
+  lcd.setCursor(2, 0);
+  lcd.write(byte(3));
+  lcd.setCursor(0, 1);
+  lcd.write(byte(4));
+  lcd.setCursor(1, 1);
+  lcd.write(byte(5));
+  lcd.setCursor(2, 1);
+  lcd.write(byte(6));
+  lcd.setCursor(4,0); 
+  lcd.print("Humidity:"); 
+  lcd.setCursor(6,1);
+  lcd.print(DHT.humidity);
+  lcd.print("%");
+  delay(1000);
+    }
+  }
+  lcd.clear();
+  delay(4000); 
+  }
+
+void loop() {
+  lcd.setCursor(0,0);
+  lcd.print("DISTANCE:");
+  lcd.setCursor(0,1);
+  lcd.print("Amount=");
+  int L =digitalRead(SENSOR);   
+    if(L == 1){
+    counter++;
+    distance= counter * 4.713;//4cm is the radius of the metal in circumference(2*pi*r=2*3.142*(1.5/2))
+    lcd.setCursor(11,0);
+    lcd.print(distance);
+    Amount=distance*0.1060895395713983; // 0.75Rs for each Distance i.e 4.713cm
+    lcd.setCursor(11,1);
+    lcd.print(Amount);
+    lcd.print("Rs");
+  delay(125);
+ }
+}
