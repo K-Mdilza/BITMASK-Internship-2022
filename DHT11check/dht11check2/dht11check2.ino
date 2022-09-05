@@ -1,7 +1,7 @@
 #include <dht.h>
 
-#define dht_apin 4 // Analog Pin sensor is connected to
- 
+#define dht_apin 19 // Analog Pin sensor is connected to
+#define buz 14 
 dht DHT;
  
 void setup(){
@@ -10,6 +10,7 @@ void setup(){
   delay(500);//Delay to let system boot
   Serial.println("DHT11 Humidity & temperature Sensor\n\n");
   delay(1000);//Wait before accessing Sensor
+  pinMode(buz,OUTPUT);
  
 }//end "setup()"
  
@@ -28,5 +29,11 @@ void loop(){
     delay(5000);//Wait 5 seconds before accessing sensor again.
  
   //Fastest should be once every two seconds.
- 
+ if(DHT.temperature>30){
+  digitalWrite(buz,HIGH);
+  }
+else
+{
+  digitalWrite(buz,LOW);
+  }
 }// end loop(
